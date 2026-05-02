@@ -96,3 +96,12 @@ $htmlPath = Join-Path $config.OutputFolder "NetworkReport.html"
 $html | Out-File $htmlPath
 
 Write-Host "Report generated: $htmlPath"
+
+$taskParams = [ordered]@{
+    Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File C:\Scripts\NetworkMonitor.ps1"
+    Trigger = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 5) -Once -At (Get-Date)
+    TaskName = "NetworkMonitor"
+    Description = "Runs network monitoring script every 5 minutes"
+}
+
+Register-ScheduledTask @taskParams
